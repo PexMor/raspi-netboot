@@ -1,0 +1,9 @@
+# dhcp-hostsdir/file for raspi-boot
+#----------------------------
+# mkdir -p ~/.config/raspi/netboot/dhcp-hostsdir
+# copy this file to ~/.config/raspi/netboot/dhcp-hostsdir
+# name it `dhcp-static-00` there
+#
+# uncomment and change the xx:yy:zz to match your raspi MAC address
+# dhcp-host=b8:27:eb:xx:yy:zz,100.64.0.128,net-pi,10m
+

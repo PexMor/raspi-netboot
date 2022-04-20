@@ -1,0 +1,12 @@
+# shell config for raspi-boot
+#----------------------------
+# mkdir -p ~/.config/raspi/netboot
+# copy this file to ~/.config/raspi/netboot
+# name it `config.inc` there
+#
+TFTP_ROOT=/tftp
+NFS_ROOT=/nfs
+IF_NAME=brinet
+IF_VLAN=eth0.200
+SUBNET=100.64.0.0/24
+
