@@ -1,5 +1,99 @@
 # Netboot Raspi
 
+This document gather some notes on how to setup booting a Raspberry Pi (3B+ and later) over network.
+## The process
+
+1. U-Boot on RPi waits 10s before trying the DHCP (?speedup by boot order?)
+2. DHCP IP requests is sent over to DHCP server (target address is 255.255.255.255 - IPv4 broadcast, IPv6 is available starting RPi 4B+)
+3. DHCP server reponds with IPv4 and few more options (43,66,67 - where only the `66`/next-server is required)
+4. RPi using the option `66` requests `bootcode.bin`
+5. The `bootcode.bin` is executed and extra files are requested from `TFTP` server
+6. When all files are 
+
+### Files requested on RPi 3B+
+
+The following was recorded by `tftpd-hpa` daemon on Ubuntu 20.04. Some files are listed and requested __twice__ and not all files are present in `boot.tar.xz` or `BOOT`/FAT partition on your micro SD card or image.
+
+> Note: the `<serial>` is placeholder for actuall serial number of your RPi.
+
+The whole process spans across period of aprox. 3 seconds running on 1Gbps network (though RPi 3B+ has USB LAN chip capable of ~ 300Mbps).
+
+For details see [#Boot folder](https://www.raspberrypi.com/documentation/computers/configuration.html#the-boot-folder) and/or [Raspberry Pi](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#raspberry-pi-4-boot-eeprom)
+
+| filename                             | status        | notes                       |
+|--------------------------------------|---------------|-----------------------------|
+| `bootcode.bin`                       | ok            |                             |
+| `bootsig.bin`                        | not present   |                             |
+| `<serial>/start.elf`                 | ok            |                             |
+| `<serial>/start.elf`                 | ok#2          |                             |
+| `<serial>/autoboot.txt`              | not present   |                             |
+| `<serial>/config.txt`                | ok            | main config                 |
+| `<serial>/recovery.elf`              | not present#1 |                             |
+| `<serial>/start.elf`                 | ok#3          |                             |
+| `<serial>/fixup.dat`                 | ok            |                             |
+| `<serial>/recovery.elf`              | not present#2 |                             |
+| `<serial>/config.txt`                | ok#2          |                             |
+| `<serial>/config.txt`                | ok#3          |                             |
+| `<serial>/dt-blob.bin`               | not present   |                             |
+| `<serial>/recovery.elf`              | not present#3 |                             |
+| `<serial>/config.txt`                | ok#4          |                             |
+| `<serial>/config.txt`                | ok#5          |                             |
+| `<serial>/bootcfg.txt`               | not present   |                             |
+| `<serial>/bcm2710-rpi-3-b-plus.dtb`  | ok            |                             |
+| `<serial>/bcm2710-rpi-3-b-plus.dtb`  | ok#2          |                             |
+| `<serial>/overlays/overlay_map.dtb`  | not present   |                             |
+| `<serial>/overlays/overlay_map.dtb`  | not present#2 |                             |
+| `<serial>/config.txt`                | ok#6          |                             |
+| `<serial>/config.txt`                | ok#7          |                             |
+| `<serial>/overlays/vc4-kms-v3d.dtbo` | not present   |                             |
+| `<serial>/overlays/vc4-kms-v3d.dtbo` | not present#2 |                             |
+| `<serial>/cmdline.txt`               | ok            | boot and NFS server details |
+| `<serial>/cmdline.txt`               | ok#2          |                             |
+| `<serial>/recovery8.img`             | not present   |                             |
+| `<serial>/kernel8.img`               | ok            |                             |
+| `<serial>/kernel8.img`               | ok#2          |                             |
+| `<serial>/armstub8.bin`              | not present   |                             |
+| `<serial>/kernel8.img`               | ok#3          |                             |
+| `<serial>/kernel8.img`               | ok#4          |                             |
+
+files present in `boot.tar.xz`:
+
+| filename                   | note |
+|----------------------------|------|
+| `bcm2710-rpi-cm3.dtb`      |      |
+| `bcm2710-rpi-zero-2.dtb`   |      |
+| `bcm2710-rpi-zero-2-w.dtb` |      |
+| `bcm2710-rpi-2-b.dtb`      |      |
+| `bcm2710-rpi-3-b.dtb`      |      |
+| `bcm2710-rpi-3-b-plus.dtb` |      |
+| `bcm2711-rpi-cm4.dtb`      |      |
+| `bcm2711-rpi-cm4s.dtb`     |      |
+| `bcm2711-rpi-4-b.dtb`      |      |
+| `bcm2711-rpi-400.dtb`      |      |
+| `cmdline.txt`              |      |
+| `config.txt`               |      |
+| `COPYING.linux`            |      |
+| `fixup_cd.dat`             |      |
+| `fixup.dat`                |      |
+| `fixup_db.dat`             |      |
+| `fixup_x.dat`              |      |
+| `fixup4cd.dat`             |      |
+| `fixup4.dat`               |      |
+| `fixup4db.dat`             |      |
+| `fixup4x.dat`              |      |
+| `issue.txt`                |      |
+| `kernel8.img`              |      |
+| `LICENCE.broadcom`         |      |
+| `overlays`                 |      |
+| `start_cd.elf`             |      |
+| `start_db.elf`             |      |
+| `start.elf`                |      |
+| `start_x.elf`              |      |
+| `start4cd.elf`             |      |
+| `start4db.elf`             |      |
+| `start4.elf`               |      |
+| `start4x.elf`              |      |
+
 Some manapages (eventually search `man dnsmasq`):
 
 * [man dnsmasq](https://thekelleys.org.uk/dnsmasq/docs/dnsmasq-man.html) to provide DHCP, TFTP and DNS
@@ -169,3 +263,15 @@ systemctl disable rpcbind.socket
 #
 systemctl status rpcbind
 ```
+
+## Where are the ips
+
+In general it is recomended to use DNS (as [It's Always DNS](https://teeherivar.com/product/its-always-dns-sysadmin/))
+
+`address=/pi-server/192.168.x.y`
+
+| path                      | IP/DNS | Usage                                               |
+|---------------------------|--------|-----------------------------------------------------|
+| DHCP server option `66`   | IP/DNS | next-server pointing to `TFTP server`               |
+| tftp:`serial`/cmdline.txt | IP/DNS | NFS server IP or name, mount `/` aka root partition |
+| rootfs`@`nfs/etc/fstab    | IP/DNS | NFS server IP or name, mount `/boot` partition      |
