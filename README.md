@@ -58,7 +58,7 @@ For details see [#Boot folder](https://www.raspberrypi.com/documentation/compute
 
 Important files:
 
-`cmdline.txt` - points to the NFS and sets the kernel options including `splash` and `quiet` (ref.[conf/cmdline.txt.sample](conf/cmdline.txt.sampe)) which could look like:
+`cmdline.txt` - points to the NFS and sets the kernel options including `splash` and `quiet` (ref.[conf/cmdline.txt.sample](conf/cmdline.txt.sample)) which could look like:
 
 `dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=/dev/nfs nfsroot=100.64.0.1:/nfs/client1,vers=4.2,proto=tcp rw ip=dhcp rootwait elevator=deadline quiet splash`
 
