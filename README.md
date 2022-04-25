@@ -275,3 +275,7 @@ In general it is recomended to use DNS (as [It's Always DNS](https://teeherivar.
 | DHCP server option `66`   | IP/DNS | next-server pointing to `TFTP server`               |
 | tftp:`serial`/cmdline.txt | IP/DNS | NFS server IP or name, mount `/` aka root partition |
 | rootfs`@`nfs/etc/fstab    | IP/DNS | NFS server IP or name, mount `/boot` partition      |
+
+## DHCP proxy
+
+[DHCP Proxy explainer @ FOG](https://wiki.fogproject.org/wiki/index.php?title=ProxyDHCP_with_dnsmasq#How_ProxyDHCP_works)
