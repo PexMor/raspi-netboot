@@ -10,11 +10,13 @@ References:
 * [DHCP option 43 @ RPi forums](https://forums.raspberrypi.com/viewtopic.php?t=282316)
 * [Ubuntu RPi 4B+](https://xunnanxu.github.io/2020/11/28/PXE-Boot-Diskless-Raspberry-Pi-4-With-Ubuntu-Ubiquiti-and-Synology-1-DHCP-Setup/)
 
-| DHCP Option no. | Name, usage                                                                                          |
-|-----------------|------------------------------------------------------------------------------------------------------|
-| 43              | vendor-specific aka service identification, client __might__ only boot with expected value received |
-| 66              | next-server, IP of tftp server or URL for http boot server                                           |
-| 67              | boot-file, filename for tftp to boot or URL for boot file                                            |
+DHCP Options:
+
+| no | Name, usage                                                                                         |
+|----|-----------------------------------------------------------------------------------------------------|
+| 43 | vendor-specific aka service identification, client __might__ only boot with expected value received |
+| 66 | next-server, IP of tftp server or URL for http boot server                                          |
+| 67 | boot-file, filename for tftp to boot or URL for boot file                                           |
 
 To get serial number of the RPi when you have it booted by other means:
 
