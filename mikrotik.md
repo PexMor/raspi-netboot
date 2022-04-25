@@ -12,7 +12,7 @@ References:
 
 | DHCP Option no. | Name, usage                                                                                          |
 |-----------------|------------------------------------------------------------------------------------------------------|
-| 43              | vendor-specific aka service indentification, client __might__ only boot with expected value received |
+| 43              | vendor-specific aka service identification, client __might__ only boot with expected value received |
 | 66              | next-server, IP of tftp server or URL for http boot server                                           |
 | 67              | boot-file, filename for tftp to boot or URL for boot file                                            |
 
